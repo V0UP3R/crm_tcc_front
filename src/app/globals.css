@@ -2,3 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
+.logo{
+	background-image: url('../../public/uniube.png');
+}
