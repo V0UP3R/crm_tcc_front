@@ -5,11 +5,16 @@ import { RxDashboard } from "react-icons/rx";
 import Image from "next/image"
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { Card } from "../components/Card";
+import { useLoginContext } from "../Context/geralContext";
+import { returnUser } from "../dataTools";
 
 export default function Dashboard() {
 
+	const {userCreatedEmail} = useLoginContext()
 	const [perfil, setPerfil] = useState(false)
-	const [dadosPerfil, setDadosPerfil] = useState({nome:'Felipe Mendes', curso:'Eng. da Computação', temaTcc:'Gerenciador de TCCs'})
+	const [dadosPerfil, setDadosPerfil] = useState(returnUser(userCreatedEmail))
+	const [professor, setProfessor] = useState(dadosPerfil.professor)
 
 	const router = useRouter()
 
@@ -22,7 +27,7 @@ export default function Dashboard() {
 			setPerfil(false)
 		} else {
 			setPerfil(true)
-			setDadosPerfil({nome:'Felipe Mendes', curso:'Eng. da Computação', temaTcc:'Gerenciador de TCCs'})
+			setDadosPerfil(returnUser(userCreatedEmail))
 		}
 	}
 
@@ -31,6 +36,10 @@ export default function Dashboard() {
 			<div  className="w-1/6 h-screen bg-azul-escuro flex flex-col items-center justify-between">
 				<span className="w-full h-2/6 max-h-48 bg-no-repeat bg-contain bg-center" />
 				<div className="w-4/6 my-6 text-branco flex flex-col">
+					<div className="mb-60 uppercase text-xs p-2 border border-solid border-white rounded-xl">
+						<p>{dadosPerfil.nome}</p>
+						<p>{dadosPerfil.professor && 'Professor'}</p>
+					</div>
 					<div className="h-12 flex items-center justify-center gap-1 border border-solid border-white rounded-xl">
 						<RxDashboard className='w-8 h-8'/>
 						<p>Dashboard</p>
@@ -71,12 +80,18 @@ export default function Dashboard() {
 							
 							<div className="bg-branco w-52 h-8 rounded-3xl font-semibold text-xl text-center flex justify-center items-center"><h1>Filtros</h1></div>
 						</div>
-						<div className="bg-branco w-1/3 h-1/3 rounded-3xl flex flex-col items-center justify-between py-4">
-							<h1 className="rounded-xl font-semibold text-3xl text-center flex justify-center items-center text-azul-escuro">{dadosPerfil.temaTcc}</h1>
-							<p>Aluno: {dadosPerfil.nome}</p>
-							<p>Área: {dadosPerfil.curso}</p>
-							<button className="bg-azul-escuro w-36 h-11 rounded-3xl font-semibold text-xl text-center text-branco">Acessar</button>
+						<div className="flex gap-4">
+						{
+							professor ?
+							dadosPerfil.arTccsAlunos.map((tcc, index) => (
+								<Card nome={tcc.nome} curso={tcc.curso} temaTcc={tcc.temaTcc} key={index}></Card>
+							))
+							:
+							<></>
+						}
 						</div>
+
+						
 						</>
 					}
 				</div>
